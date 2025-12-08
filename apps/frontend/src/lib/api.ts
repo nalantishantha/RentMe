@@ -29,4 +29,20 @@ export const authApi ={
         })
 }
 
+export const propertyApi = {
+    create: (data: any, token: string) => 
+        api.post('/properties', data,{
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }),
+
+    getMyProperties: (token: string) =>
+        api.get('/properties/my', {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+}
+
 export default api
