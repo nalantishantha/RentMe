@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Table, Input, Button, Space, Modal, Tag, message, Descriptions, Card, Typography, Popconfirm, Form, Select } from 'antd';
+import { Table, Input, Button, Space, Modal, message, Descriptions, Card, Typography, Popconfirm, Form, Select } from 'antd';
 import { SearchOutlined, EyeOutlined, EditOutlined, DeleteOutlined, StopOutlined, CheckCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { userApi } from '@/lib/api';
 import { useAuth } from '@/contexts/AuthContex';
@@ -207,9 +207,7 @@ export default function AdminUsersPage() {
       dataIndex: 'role',
       key: 'role',
       render: (role: string) => (
-        <Tag color={role === 'admin' ? 'red' : 'blue'}>
-          {role.toUpperCase()}
-        </Tag>
+        <span className="px-2 py-1 rounded bg-gray-100 text-gray-800 text-xs font-semibold uppercase">{role}</span>
       ),
     },
     {
@@ -217,9 +215,7 @@ export default function AdminUsersPage() {
       dataIndex: 'isActive',
       key: 'isActive',
       render: (isActive: boolean) => (
-        <Tag color={isActive ? 'green' : 'default'}>
-          {isActive ? 'Active' : 'Inactive'}
-        </Tag>
+        <span className={`px-2 py-1 rounded text-xs font-semibold ${isActive ? 'bg-gray-800 text-white' : 'bg-gray-200 text-gray-600'}`}>{isActive ? 'Active' : 'Inactive'}</span>
       ),
     },
     {
@@ -244,7 +240,7 @@ export default function AdminUsersPage() {
               okText="Yes"
               cancelText="No"
             >
-              <Button type="link" icon={<StopOutlined />} danger />
+              <Button type="link" icon={<StopOutlined />} />
             </Popconfirm>
           ) : (
             <Popconfirm
@@ -262,7 +258,7 @@ export default function AdminUsersPage() {
             okText="Yes"
             cancelText="No"
           >
-            <Button type="link" icon={<DeleteOutlined />} danger />
+            <Button type="link" icon={<DeleteOutlined />} />
           </Popconfirm>
         </Space>
       ),
@@ -289,7 +285,7 @@ export default function AdminUsersPage() {
                 icon={<PlusOutlined />}
                 size="large"
                 onClick={() => setAddUserVisible(true)}
-                style={{ backgroundColor: '#1e293b', borderColor: '#1e293b' }}
+                className="bg-gray-800 border-gray-800 text-white"
               >
                 Add User
               </Button>
@@ -336,14 +332,10 @@ export default function AdminUsersPage() {
                 <Descriptions.Item label="Last Name">{selectedUser.lastName}</Descriptions.Item>
                 <Descriptions.Item label="Phone">{selectedUser.phone || 'N/A'}</Descriptions.Item>
                 <Descriptions.Item label="Role">
-                  <Tag color={selectedUser.role === 'admin' ? 'red' : 'blue'}>
-                    {selectedUser.role.toUpperCase()}
-                  </Tag>
+                  <span className="px-2 py-1 rounded bg-gray-100 text-gray-600 text-xs font-semibold uppercase">{selectedUser.role}</span>
                 </Descriptions.Item>
                 <Descriptions.Item label="Status">
-                  <Tag color={selectedUser.isActive ? 'green' : 'default'}>
-                    {selectedUser.isActive ? 'Active' : 'Inactive'}
-                  </Tag>
+                  <span className={`px-2 py-1 rounded text-xs font-semibold ${selectedUser.isActive ? 'bg-gray-600 text-white' : 'bg-gray-200 text-gray-600'}`}>{selectedUser.isActive ? 'Active' : 'Inactive'}</span>
                 </Descriptions.Item>
                 <Descriptions.Item label="Created At">
                   {new Date(selectedUser.createdAt).toLocaleDateString()}
@@ -372,9 +364,7 @@ export default function AdminUsersPage() {
                             </Text>
                           </Space>
                         </div>
-                        <Tag color={property.isActive ? 'green' : 'default'}>
-                          {property.isActive ? 'Active' : 'Inactive'}
-                        </Tag>
+                        <span className={`px-2 py-1 rounded text-xs font-semibold ${property.isActive ? 'bg-gray-800 text-white' : 'bg-gray-200 text-gray-600'}`}>{property.isActive ? 'Active' : 'Inactive'}</span>
                       </div>
                     </Card>
                   ))}
@@ -537,7 +527,7 @@ export default function AdminUsersPage() {
                   type="primary"
                   size="large"
                   htmlType="submit"
-                  style={{ backgroundColor: '#1e293b', borderColor: '#1e293b' }}
+                  className="bg-gray-800 border-gray-800 text-white"
                 >
                   Create User
                 </Button>

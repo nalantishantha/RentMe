@@ -44,8 +44,10 @@ export const propertyApi = {
             }
         }),
     
-    getAllProperties: () =>
-        api.get('/properties')
+    getAllProperties: (search?: string) =>
+        api.get('/properties', {
+            params: search ? { search } : {}
+        })
 }
 
 export const userApi = {
@@ -98,6 +100,43 @@ export const userApi = {
                 Authorization: `Bearer ${token}`
             }
         })
+}
+
+export const permissionApi = {
+    getPermissions: (token?: string) =>
+        api.get('/permissions', token ? {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        } : {}),
+    
+    getPermission: (id: number, token?: string) =>
+        api.get(`/permissions/${id}`, token ? {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        } : {}),
+    
+    createPermission: (data: any, token?: string) =>
+        api.post('/permissions', data, token ? {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        } : {}),
+    
+    updatePermission: (id: number, data: any, token?: string) =>
+        api.patch(`/permissions/${id}`, data, token ? {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        } : {}),
+    
+    deletePermission: (id: number, token?: string) =>
+        api.delete(`/permissions/${id}`, token ? {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        } : {})
 }
 
 export default api

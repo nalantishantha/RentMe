@@ -9,6 +9,8 @@ import { AuthModule } from './auth/auth.module';
 import { PropertiesModule } from './properties/properties.module';
 import { Property } from './properties/entities/properties.entity';
 import { PropertyImage } from './properties/entities/property-image.entity';
+import { PermissionsModule } from './permissions/permissions.module';
+import { Permission } from './permissions/entities/permission.entity';
 
 @Module({
   imports: [
@@ -22,16 +24,17 @@ import { PropertyImage } from './properties/entities/property-image.entity';
         username: configService.get('DB_USERNAME'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_NAME'),
-        entities: [User, UserPassword, Property, PropertyImage],
+        entities: [User, UserPassword, Property, PropertyImage, Permission],
         synchronize: true,
       }),
       inject: [ConfigService],
     }),
-    TypeOrmModule.forFeature([User, UserPassword, Property, PropertyImage]),
+    TypeOrmModule.forFeature([User, UserPassword, Property, PropertyImage, Permission]),
     AuthModule,
     UsersModule,
     UserPasswordsModule,
-    PropertiesModule
+    PropertiesModule,
+    PermissionsModule
   ],
   controllers: [],
   providers: [],

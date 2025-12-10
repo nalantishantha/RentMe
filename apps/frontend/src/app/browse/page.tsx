@@ -1,5 +1,7 @@
 "use client";
 
+import { Input, Button } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
 import { propertyApi } from '@/lib/api';
 
@@ -33,15 +35,17 @@ export default function BrowsePage() {
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [search, setSearch] = useState('');
+  const [searching, setSearching] = useState(false);
 
   useEffect(() => {
     fetchAllProperties();
   }, []);
 
-  const fetchAllProperties = async () => {
+  const fetchAllProperties = async (searchQuery?: string) => {
     try {
       setLoading(true);
-      const response = await propertyApi.getAllProperties();
+      const response = await propertyApi.getAllProperties(searchQuery);
       setProperties(response.data);
       setError('');
     } catch (err: any) {
@@ -50,6 +54,13 @@ export default function BrowsePage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSearch = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSearching(true);
+    await fetchAllProperties(search.trim());
+    setSearching(false);
   };
 
   const formatDate = (dateString: string) => {
@@ -78,7 +89,28 @@ export default function BrowsePage() {
       <main className="flex-grow container mx-auto px-6 py-12">
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-800 mb-2">Browse Properties</h1>
-          <p className="text-gray-600">Discover your perfect rental home</p>
+          <p className="text-gray-600 mb-6">Discover your perfect rental home</p>
+          <form onSubmit={handleSearch} className="flex items-center max-w-xl w-full mb-4">
+            <Input
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              placeholder="Search by title, city, or seller..."
+              size="large"
+              className="rounded-l-md"
+              style={{ borderTopRightRadius: 0, borderBottomRightRadius: 0 }}
+            />
+            <Button
+              type="primary"
+              htmlType="submit"
+              size="large"
+              className='bg-gray-700'
+              icon={<SearchOutlined />}
+              loading={searching}
+              style={{ borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }}
+            >
+              Search
+            </Button>
+          </form>
         </div>
 
         {error && (
@@ -124,7 +156,7 @@ export default function BrowsePage() {
                       strokeLinejoin="round"
                       strokeWidth={1.5}
                       d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                    />
+                  />
                   </svg>
                 </div>
 

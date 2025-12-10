@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { UserPassword } from 'src/user-passwords/entities/user-password.entity';
 import { JwtService } from '@nestjs/jwt';
+import { Permission } from 'src/permissions/entities/permission.entity';
 
 @Injectable()
 export class AuthService {
@@ -14,6 +15,9 @@ export class AuthService {
 
         @InjectRepository(UserPassword)
         private readonly userPasswordRepository: Repository<UserPassword>,
+
+        @InjectRepository(Permission)
+        private readonly permissionRepository: Repository<Permission>,
 
         private readonly jwtService: JwtService
     ){}
@@ -92,12 +96,20 @@ export class AuthService {
     }
 
     async login(user: any) {
+        // Fetch permissions for user's role
+        const rolePermissions = await this.permissionRepository.findOne({
+            where: { role: user.role }
+        });
+
+        const permissions = rolePermissions ? rolePermissions.permissions : {};
+
         const payload = {
         sub: user.id,
         email: user.email,
         role: user.role,
         firstName: user.firstName,
         lastName: user.lastName,
+        permissions: permissions,
         };
 
         return {
@@ -109,6 +121,7 @@ export class AuthService {
             firstName: user.firstName,
             lastName: user.lastName,
         },
+        permissions: permissions,
         };
     }
 

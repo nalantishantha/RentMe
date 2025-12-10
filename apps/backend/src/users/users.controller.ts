@@ -3,22 +3,22 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
-import { RolesGuard } from '../guards/roles.guard';
-import { Roles } from '../decorators/roles.decorator';
+import { PermissionsGuard } from '../guards/permissions.guard';
+import { RequirePermissions } from '../decorators/permissions.decorator';
 
 @Controller('users')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, PermissionsGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  @Roles('admin')
+  @RequirePermissions('add_user')
   async createUser(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
 
   @Get()
-  @Roles('admin')
+  @RequirePermissions('view_all_users')
   async getAllUsers(
     @Query('page') page: string = '1',
     @Query('limit') limit: string = '10',
@@ -28,19 +28,19 @@ export class UsersController {
   }
 
   @Get(':id')
-  @Roles('admin')
+  @RequirePermissions('view_all_users')
   async getUserById(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.findOne(id);
   }
 
   @Get(':id/details')
-  @Roles('admin')
+  @RequirePermissions('view_all_users')
   async getUserWithProperties(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.getUserWithProperties(id);
   }
 
   @Patch(':id')
-  @Roles('admin')
+  @RequirePermissions('edit_user')
   async updateUser(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateUserDto: UpdateUserDto,
@@ -49,19 +49,19 @@ export class UsersController {
   }
 
   @Delete(':id')
-  @Roles('admin')
+  @RequirePermissions('delete_user')
   async deleteUser(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.remove(id);
   }
 
   @Patch(':id/inactive')
-  @Roles('admin')
+  @RequirePermissions('edit_user')
   async setInactive(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.setInactive(id);
   }
 
   @Patch(':id/active')
-  @Roles('admin')
+  @RequirePermissions('edit_user')
   async setActive(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.setActive(id);
   }

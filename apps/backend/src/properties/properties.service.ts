@@ -1,3 +1,4 @@
+  
 import { Injectable } from '@nestjs/common';
 import { CreatePropertyDto } from './dto/create-property.dto';
 import { UpdatePropertyDto } from './dto/update-property.dto';
@@ -31,6 +32,17 @@ export class PropertiesService {
         created_at: 'DESC'
       }
     })
+  }
+
+  async searchProperties(search: string): Promise<Property[]> {
+    return await this.propertyRepository.createQueryBuilder('property')
+      .leftJoinAndSelect('property.seller', 'seller')
+      .where('property.title ILIKE :search', { search: `%${search}%` })
+      .orWhere('property.city ILIKE :search', { search: `%${search}%` })
+      .orWhere('seller.firstName ILIKE :search', { search: `%${search}%` })
+      .orWhere('seller.lastName ILIKE :search', { search: `%${search}%` })
+      .orderBy('property.created_at', 'DESC')
+      .getMany();
   }
 }
 

@@ -51,10 +51,10 @@ export default function AdminNavbar() {
                 Users
               </Link>
               <Link 
-                href="/admin/properties" 
+                href="/admin/permissions" 
                 className="px-4 py-2 hover:bg-slate-700 rounded-md transition font-medium"
               >
-                Properties
+                Permissions
               </Link>
               {/* <Link 
                 href="/admin/profile" 
