@@ -25,7 +25,12 @@ export class PropertiesService {
   }
 
   async findAll(): Promise<Property[]> {
-    return await this.propertyRepository.find()
+    return await this.propertyRepository.find({
+      relations: ['seller'],
+      order: {
+        created_at: 'DESC'
+      }
+    })
   }
 }
 

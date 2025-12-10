@@ -23,9 +23,9 @@ export default function SellerLayout({ children }: { children: React.ReactNode }
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-gray-50">
       <SellerNavbar />
-      <main className="flex-grow container mx-auto px-6 py-12">
+      <main className="flex-grow">
         {children}
       </main>
       <Footer />

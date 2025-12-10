@@ -56,12 +56,12 @@ export default function AdminNavbar() {
               >
                 Properties
               </Link>
-              <Link 
-                href="/profile" 
+              {/* <Link 
+                href="/admin/profile" 
                 className="px-4 py-2 hover:bg-slate-700 rounded-md transition font-medium"
               >
                 Profile
-              </Link>
+              </Link> */}
             </div>
           </div>
 

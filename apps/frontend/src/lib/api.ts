@@ -42,6 +42,61 @@ export const propertyApi = {
             headers: {
                 Authorization: `Bearer ${token}`
             }
+        }),
+    
+    getAllProperties: () =>
+        api.get('/properties')
+}
+
+export const userApi = {
+    createUser: (data: any, token: string) =>
+        api.post('/users', data, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }),
+
+    getUsers: (page: number, limit: number, search: string, token: string) =>
+        api.get('/users', {
+            params: { page, limit, search },
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }),
+    
+    getUserDetails: (id: number, token: string) =>
+        api.get(`/users/${id}/details`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }),
+    
+    updateUser: (id: number, data: any, token: string) =>
+        api.patch(`/users/${id}`, data, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }),
+    
+    deleteUser: (id: number, token: string) =>
+        api.delete(`/users/${id}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }),
+    
+    setInactive: (id: number, token: string) =>
+        api.patch(`/users/${id}/inactive`, {}, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }),
+    
+    setActive: (id: number, token: string) =>
+        api.patch(`/users/${id}/active`, {}, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
         })
 }
 

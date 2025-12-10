@@ -15,14 +15,21 @@ export default function AddPropertyPage() {
 
   const onFinish = async (values: any) => {
     try {
-      await propertyApi.create(values, token!);
+      // Format the date if available_from is provided
+      const formattedValues = {
+        ...values,
+        available_from: values.available_from 
+          ? values.available_from.format('YYYY-MM-DD') 
+          : undefined
+      };
+
+      await propertyApi.create(formattedValues, token!);
       message.success("Property added successfully");
       form.resetFields();
     } catch (error) {
-      message.error("Failed to add property")
+      console.error("Error adding property:", error);
+      message.error("Failed to add property");
     }
-    
-    // console.log({ ...values, images: fileList });
   };
 
   // const handleChange = ({ fileList: newFileList }: any) => {
@@ -30,9 +37,8 @@ export default function AddPropertyPage() {
   // };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <main className="flex-grow container mx-auto px-6 py-16">
-        <h1 className="text-center text-5xl font-extrabold text-gray-800 mb-10">Add New Property</h1>
+    <div className="container mx-auto px-6 py-16">
+      <h1 className="text-center text-5xl font-extrabold text-gray-800 mb-10">Add New Property</h1>
         <Form
           form={form}
           layout="vertical"
@@ -150,7 +156,6 @@ export default function AddPropertyPage() {
             </Button>
           </Form.Item>
         </Form>
-      </main>
     </div>
   );
 }
