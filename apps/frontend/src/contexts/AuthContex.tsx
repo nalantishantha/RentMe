@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import { authApi } from '@/lib/api';
 
 interface Permissions {
@@ -58,27 +58,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(false);
   }, []);
 
-  const hasPermission = (permission: string): boolean => {
+  const hasPermission = useCallback((permission: string): boolean => {
     return permissions[permission as keyof Permissions] === true;
-  };
+  }, [permissions]);
 
-  const login = async (email: string, password: string) => {
+  const login = useCallback(async (email: string, password: string) => {
     try {
       const response = await authApi.login({ email, password });
-      localStorage.setItem('access_token', response.data.access_token);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
-      localStorage.setItem('permissions', JSON.stringify(response.data.permissions || {}));
-      setToken(response.data.access_token);
-      setUser(response.data.user);
-      setPermissions(response.data.permissions || {});
-      return response.data.user;
+      const { access_token, user: userData, permissions: userPermissions } = response.data;
+      
+      // Batch localStorage writes
+      localStorage.setItem('access_token', access_token);
+      localStorage.setItem('user', JSON.stringify(userData));
+      localStorage.setItem('permissions', JSON.stringify(userPermissions || {}));
+      
+      setToken(access_token);
+      setUser(userData);
+      setPermissions(userPermissions || {});
+      return userData;
     } catch (error: any) {
       console.error('Login failed:', error);
       throw error;
     }
-  };
+  }, []);
 
-  const logout = async () => {
+  const logout = useCallback(async () => {
     try {
       if (token) {
         await authApi.logout(token);
@@ -86,6 +90,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch (error) {
       console.error('Logout failed', error);
     } finally {
+      // Batch localStorage removals
       localStorage.removeItem('access_token');
       localStorage.removeItem('user');
       localStorage.removeItem('permissions');
@@ -93,10 +98,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(null);
       setPermissions({});
     }
-  };
+  }, [token]);
+
+  const contextValue = useMemo(() => ({
+    user,
+    token,
+    permissions,
+    hasPermission,
+    login,
+    logout,
+    isLoading
+  }), [user, token, permissions, hasPermission, login, logout, isLoading]);
 
   return (
-    <AuthContext.Provider value={{ user, token, permissions, hasPermission, login, logout, isLoading }}>
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   );

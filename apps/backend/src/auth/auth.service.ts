@@ -51,8 +51,8 @@ export class AuthService {
 
         const savedUser = await this.userRepository.save(user)
 
-        // create password and hash it
-        const salt = await bcrypt.genSalt(10)
+        // create password and hash it (reduced to 8 rounds for better performance)
+        const salt = await bcrypt.genSalt(8)
         const hashedPassword = await bcrypt.hash(signupData.password, salt)
 
         const UserPassword = this.userPasswordRepository.create({
@@ -70,29 +70,31 @@ export class AuthService {
     }
 
     async validateUser(email: string, password: string): Promise<any> {
-        // 1. Find user with password relation
-        const user = await this.userRepository.findOne({
-        where: { email, isActive: true },
-        relations: ['password'],
-        });
+        // Find user and password in single query
+        const userPassword = await this.userPasswordRepository
+            .createQueryBuilder('up')
+            .innerJoin('up.user', 'user')
+            .where('user.email = :email', { email })
+            .andWhere('user.isActive = :isActive', { isActive: true })
+            .select(['up.userId', 'up.password'])
+            .getOne();
 
-        if (!user) {
-        throw new UnauthorizedException('Invalid email or password');
-        }
-
-        // 2. Check password
-        const userPassword = await this.userPasswordRepository.findOne({ where: { userId: user.id } });
         if (!userPassword) {
             throw new UnauthorizedException('Invalid email or password');
         }
-        
+
         const isPasswordValid = await bcrypt.compare(password, userPassword.password);
         if (!isPasswordValid) {
             throw new UnauthorizedException('Invalid email or password');
         }
 
-        const { password: _, ...result } = user;
-        return result;
+        // Fetch user details only after password validation
+        const user = await this.userRepository.findOne({
+            where: { id: userPassword.userId },
+            select: ['id', 'email', 'firstName', 'lastName', 'role', 'isActive']
+        });
+
+        return user;
     }
 
     async login(user: any) {

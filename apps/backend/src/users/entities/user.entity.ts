@@ -1,7 +1,9 @@
 import { UserPassword } from 'src/user-passwords/entities/user-password.entity';
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToOne, Index } from 'typeorm';
 
 @Entity('users')
+@Index(['email', 'isActive']) // Composite index for faster login queries
+@Index(['role']) // Index for role-based queries
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
