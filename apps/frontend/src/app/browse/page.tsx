@@ -94,7 +94,7 @@ export default function BrowsePage() {
             <Input
               value={search}
               onChange={e => setSearch(e.target.value)}
-              placeholder="Search by title, city, or seller..."
+              placeholder="Search by type, city, or seller..."
               size="large"
               className="rounded-l-md"
               style={{ borderTopRightRadius: 0, borderBottomRightRadius: 0 }}

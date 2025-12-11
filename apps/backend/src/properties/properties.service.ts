@@ -37,7 +37,7 @@ export class PropertiesService {
   async searchProperties(search: string): Promise<Property[]> {
     return await this.propertyRepository.createQueryBuilder('property')
       .leftJoinAndSelect('property.seller', 'seller')
-      .where('property.title ILIKE :search', { search: `%${search}%` })
+      .where('property.type ILIKE :search', { search: `%${search}%` })
       .orWhere('property.city ILIKE :search', { search: `%${search}%` })
       .orWhere('seller.firstName ILIKE :search', { search: `%${search}%` })
       .orWhere('seller.lastName ILIKE :search', { search: `%${search}%` })
